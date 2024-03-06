@@ -1,20 +1,31 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 
-function HeaderLoggedOut() {
+function HeaderLoggedOut(props) {
+    // Update state of user and pw
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
 
     async function handleSubmit(e) {
         e.preventDefault();
+        // Contact server backend using Axios
         try {
             const response = await Axios.post("http://localhost:8080/login", {
                 username,
                 password,
             });
             if (response.data) {
-                console.log(response.data);
+                // If successfully saved data to db, save data to LS
+                localStorage.setItem("complexAppToken", response.data.token);
+                localStorage.setItem(
+                    "complexAppUsername",
+                    response.data.username
+                );
+                localStorage.setItem("complexAppAvatar", response.data.avatar);
+                // Pass true so setLoggedIn loads in Header.js
+                props.setLoggedIn(true);
             } else {
+                // Throw error in console if not load to db
                 console.log("Incorrect username / password");
             }
         } catch (e) {
