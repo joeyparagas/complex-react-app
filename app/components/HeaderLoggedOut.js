@@ -10,7 +10,7 @@ function HeaderLoggedOut(props) {
         e.preventDefault();
         // Contact server backend using Axios
         try {
-            const response = await Axios.post("http://localhost:8080/login", {
+            const response = await Axios.post("/login", {
                 username,
                 password,
             });

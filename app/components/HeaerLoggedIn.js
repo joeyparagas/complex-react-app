@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 function HeaderLoggedIn(props) {
     // Pass false to load HeaderLoggedOut loads in Header.js & remove data from LS
@@ -23,9 +24,9 @@ function HeaderLoggedIn(props) {
                     src={localStorage.getItem("complexAppAvatar")}
                 />
             </a>
-            <a className="btn btn-sm btn-success mr-2" href="/create-post">
+            <Link className="btn btn-sm btn-success mr-2" to="/create-post">
                 Create Post
-            </a>
+            </Link>
             <button onClick={handleLogout} className="btn btn-sm btn-secondary">
                 Sign Out
             </button>
