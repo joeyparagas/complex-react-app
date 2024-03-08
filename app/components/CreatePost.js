@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import Page from "./Page";
 import Axios from "axios";
 
@@ -6,16 +7,19 @@ function CreatePost() {
     // Create state for post title and body text
     const [title, setTitle] = useState();
     const [body, setBody] = useState();
+    const navigate = useNavigate();
 
     // onSubmit post to database
     async function handleSubmit(e) {
         e.preventDefault();
         try {
-            await Axios.post("/create-post", {
+            const response = await Axios.post("/create-post", {
                 title,
                 body,
                 token: localStorage.getItem("complexAppToken"),
             });
+            // Redirect to new post url
+            navigate(`/post/${response.data}`);
             console.log("New post created");
         } catch (e) {
             console.log("There was a problem");
