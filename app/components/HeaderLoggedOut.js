@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Axios from "axios";
+import ExampleContext from "../ExampleContext";
 
 function HeaderLoggedOut(props) {
     // Update state of user and pw
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
+    const { setLoggedIn } = useContext(ExampleContext);
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -23,7 +25,9 @@ function HeaderLoggedOut(props) {
                 );
                 localStorage.setItem("complexAppAvatar", response.data.avatar);
                 // Pass true so setLoggedIn loads in Header.js
-                props.setLoggedIn(true);
+                // props.setLoggedIn(true);
+                // using Context
+                setLoggedIn(true);
             } else {
                 // Throw error in console if not load to db
                 console.log("Incorrect username / password");

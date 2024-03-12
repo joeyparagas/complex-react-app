@@ -1,10 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
+import ExampleContext from "../ExampleContext";
 
 function HeaderLoggedIn(props) {
+    const { setLoggedIn } = useContext(ExampleContext);
+
     // Pass false to load HeaderLoggedOut loads in Header.js & remove data from LS
     function handleLogout() {
-        props.setLoggedIn(false);
+        // Passing in setLoggedIn as props
+        // props.setLoggedIn(false);
+        // Using Context to pass setLoggedIn
+        setLoggedIn(false);
+
         localStorage.removeItem("complexAppToken");
         localStorage.removeItem("complexAppUsername");
         localStorage.removeItem("complexAppAvatar");
