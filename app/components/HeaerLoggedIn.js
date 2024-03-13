@@ -1,17 +1,17 @@
 import React, { useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
-import ExampleContext from "../ExampleContext";
+// import ExampleContext from "../ExampleContext";
+import DispatchContext from "../DispatchContext";
 
 function HeaderLoggedIn(props) {
-    const { setLoggedIn } = useContext(ExampleContext);
+    // No longer using props, but pulling state from Context
+    const appDispatch = useContext(DispatchContext);
+    // const {setLoggedIn} = useContext(ExampelContext);
 
-    // Pass false to load HeaderLoggedOut loads in Header.js & remove data from LS
     function handleLogout() {
-        // Passing in setLoggedIn as props
-        // props.setLoggedIn(false);
-        // Using Context to pass setLoggedIn
-        setLoggedIn(false);
-
+        // useContext to handle logout
+        appDispatch({ type: "logout" });
+        // setLoggedIn(false); - no longer needed due to useReducer
         localStorage.removeItem("complexAppToken");
         localStorage.removeItem("complexAppUsername");
         localStorage.removeItem("complexAppAvatar");

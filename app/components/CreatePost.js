@@ -2,14 +2,18 @@ import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router";
 import Page from "./Page";
 import Axios from "axios";
-import ExampleContext from "../ExampleContext";
+// import ExampleContext from "../ExampleContext";
+import DispatchContext from "../DispatchContext";
 
 function CreatePost(props) {
     // Create state for post title and body text
     const [title, setTitle] = useState();
     const [body, setBody] = useState();
     const navigate = useNavigate();
-    const { addFlashMessage } = useContext(ExampleContext);
+
+    // No longer using props, but pulling state from Context
+    // const { addFlashMessage } = useContext(ExampleContext); - no longer needed due to useReducer
+    const appDispatch = useContext(DispatchContext);
 
     // onSubmit post to database
     async function handleSubmit(e) {
@@ -20,11 +24,12 @@ function CreatePost(props) {
                 body,
                 token: localStorage.getItem("complexAppToken"),
             });
-            // Run addFlashMessage() being passed as a prop
-            // props.addFlashMessage("A new post has been created!");
-
-            // Run addFlashMessage() while using Context
-            addFlashMessage("A brand new post has been created!");
+            // addFlashMessage("A brand new post has been created!"); - no longer needed due to useReducer
+            // Using Dispatch to forward flashMessage
+            appDispatch({
+                type: "flashMessage",
+                value: "A brand new post has been created!",
+            });
             // Redirect to new post url
             navigate(`/post/${response.data}`);
             console.log("New post created");
