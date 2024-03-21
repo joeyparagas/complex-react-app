@@ -1,5 +1,6 @@
 import React, { useState, useReducer } from "react";
 import ReactDOM from "react-dom/client";
+import { useImmerReducer } from "use-immer";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Axios from "axios";
 Axios.defaults.baseURL = "http://localhost:8080";
@@ -29,23 +30,39 @@ function Main() {
         // data will be inserted pending the status
         flashMessages: [],
     };
-    // Using useReducer - function parameter - how the state data will change depending on the actions of this function
-    function ourReducer(state, action) {
-        // switch case returns data depending on the type of action being used
-        // note that login/logout currently do not have messages
+    // // Using useReducer - function parameter - how the state data will change depending on the actions of this function
+    // function ourReducer(state, action) {
+    //     // switch case returns data depending on the type of action being used
+    //     // note that login/logout currently do not have messages
+    //     switch (action.type) {
+    //         case "login":
+    //             return { loggedIn: true, flashMessages: state.flashMessages };
+    //         case "logout":
+    //             return { loggedIn: false, flashMessages: state.flashMessages };
+    //         case "flashMessage":
+    //             return {
+    //                 loggedIn: state.loggedIn,
+    //                 flashMessages: state.flashMessages.concat(action.value),
+    //             };
+    //     }
+    // }
+    // const [state, dispatch] = useReducer(ourReducer, initialState);
+
+    // Using Immer instead
+    function ourReducer(draft, action) {
         switch (action.type) {
             case "login":
-                return { loggedIn: true, flashMessages: state.flashMessages };
+                draft.loggedIn = true;
+                return;
             case "logout":
-                return { loggedIn: false, flashMessages: state.flashMessages };
+                draft.loggedIn = false;
+                return;
             case "flashMessage":
-                return {
-                    loggedIn: state.loggedIn,
-                    flashMessages: state.flashMessages.concat(action.value),
-                };
+                draft.flashMessages.push(action.value);
+                return;
         }
     }
-    const [state, dispatch] = useReducer(ourReducer, initialState);
+    const [state, dispatch] = useImmerReducer(ourReducer, initialState);
 
     // No longer needed when using useReducer
     // const [loggedIn, setLoggedIn] = useState(Boolean(localStorage.getItem("complexAppToken")),);
