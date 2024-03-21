@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 
 function FlashMessages(props) {
-    // Pull flashMessages state and output the alertMsg and index
     return (
         <div className="floating-alerts">
             {props.messages.map((alertMsg, index) => {

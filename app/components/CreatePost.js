@@ -2,18 +2,15 @@ import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router";
 import Page from "./Page";
 import Axios from "axios";
-// import ExampleContext from "../ExampleContext";
 import DispatchContext from "../DispatchContext";
+import StateContext from "../StateContext";
 
 function CreatePost(props) {
-    // Create state for post title and body text
     const [title, setTitle] = useState();
     const [body, setBody] = useState();
     const navigate = useNavigate();
-
-    // No longer using props, but pulling state from Context
-    // const { addFlashMessage } = useContext(ExampleContext); - no longer needed due to useReducer
     const appDispatch = useContext(DispatchContext);
+    const appState = useContext(StateContext);
 
     // onSubmit post to database
     async function handleSubmit(e) {
@@ -22,15 +19,15 @@ function CreatePost(props) {
             const response = await Axios.post("/create-post", {
                 title,
                 body,
-                token: localStorage.getItem("complexAppToken"),
+                // token: localStorage.getItem("complexAppToken"),
+
+                // get data from State Context instead of localStorage
+                token: appState.user.token,
             });
-            // addFlashMessage("A brand new post has been created!"); - no longer needed due to useReducer
-            // Using Dispatch to forward flashMessage
             appDispatch({
                 type: "flashMessage",
                 value: "A brand new post has been created!",
             });
-            // Redirect to new post url
             navigate(`/post/${response.data}`);
             console.log("New post created");
         } catch (e) {
@@ -46,7 +43,6 @@ function CreatePost(props) {
                         <small>Title</small>
                     </label>
                     <input
-                        // text input updates title state
                         onChange={(e) => setTitle(e.target.value)}
                         autoFocus
                         name="title"
@@ -66,7 +62,6 @@ function CreatePost(props) {
                         <small>Body Content</small>
                     </label>
                     <textarea
-                        // text input updates body text state
                         onChange={(e) => setBody(e.target.value)}
                         name="body"
                         id="post-body"

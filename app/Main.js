@@ -1,12 +1,10 @@
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { useImmerReducer } from "use-immer";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Axios from "axios";
 Axios.defaults.baseURL = "http://localhost:8080";
 
-// Pointers needed when using useContext and/or in combination with useReducer
-// import ExampleContext from "./ExampleContext"; no longer needed with useReducer
 import StateContext from "./StateContext";
 import DispatchContext from "./DispatchContext";
 
@@ -22,37 +20,26 @@ import ViewSinglePost from "./components/ViewSinglePost";
 import FlashMessages from "./components/FlashMessages";
 
 function Main() {
-    // Using useReducer - state parameter that will hold all the state instances in one location
     const initialState = {
-        // pulls from localStorage to see if user is logged in
         loggedIn: Boolean(localStorage.getItem("complexAppToken")),
-
-        // data will be inserted pending the status
         flashMessages: [],
+        user: {
+            token: localStorage.getItem("complexAppToken"),
+            username: localStorage.getItem("complexAppUsername"),
+            avatar: localStorage.getItem("complexAppAvatar"),
+        },
     };
-    // // Using useReducer - function parameter - how the state data will change depending on the actions of this function
-    // function ourReducer(state, action) {
-    //     // switch case returns data depending on the type of action being used
-    //     // note that login/logout currently do not have messages
-    //     switch (action.type) {
-    //         case "login":
-    //             return { loggedIn: true, flashMessages: state.flashMessages };
-    //         case "logout":
-    //             return { loggedIn: false, flashMessages: state.flashMessages };
-    //         case "flashMessage":
-    //             return {
-    //                 loggedIn: state.loggedIn,
-    //                 flashMessages: state.flashMessages.concat(action.value),
-    //             };
-    //     }
-    // }
-    // const [state, dispatch] = useReducer(ourReducer, initialState);
 
-    // Using Immer instead
+    // Using Immer Reducer
     function ourReducer(draft, action) {
         switch (action.type) {
             case "login":
                 draft.loggedIn = true;
+                // In the case of login, response.data (user login info) is being passed via HeaderLoggedOut.js
+                // Set the user login info to state (draft.user)
+                draft.user = action.data;
+                // Option: you can set the action.data to localStorage from here,
+                // but it's best separate that and use useEffect (see below)
                 return;
             case "logout":
                 draft.loggedIn = false;
@@ -64,26 +51,20 @@ function Main() {
     }
     const [state, dispatch] = useImmerReducer(ourReducer, initialState);
 
-    // No longer needed when using useReducer
-    // const [loggedIn, setLoggedIn] = useState(Boolean(localStorage.getItem("complexAppToken")),);
-    // const [flashMessages, setFlashMessages] = useState([]);
-    // function addFlashMessage(alertMsg) {
-    //     setFlashMessages((prev) => prev.concat(alertMsg));
-    // }
+    // Take the draft.user state from ourReducer "loggedIn" state and copy it to localStorage
+    useEffect(() => {
+        if (state.loggedIn) {
+            localStorage.setItem("complexAppToken", state.user.token);
+            localStorage.setItem("complexAppUsername", state.user.username);
+            localStorage.setItem("complexAppAvatar", state.user.avatar);
+        } else {
+            // when logged out, remove from localStorage
+            localStorage.removeItem("complexAppToken");
+            localStorage.removeItem("complexAppUsername");
+            localStorage.removeItem("complexAppAvatar");
+        }
+    }, [state.loggedIn]);
 
-    // StateContext & DispatchContext are separated instead of value={state, dispatch}
-    // This is becuase not all routes need both state and dispatch all the time
-    // <Header loggedIn={loggedIn} />
-    // Prop is not needed since state is no longer being passed via prop
-    // Instead using useContext/useReducer combination
-
-    // <StateContext.Provider value={state}> and
-    // <DispatchContext.Provider value={dispatch}>
-    // Pulls from useReducer array which points to initialState & ourReducer
-
-    // <Route path="/" element={loggedIn ? <Home /> : <HomeGuest />} />
-    // This is no longer being passed as a prop but part of the Reducer state
-    // See below to use proper syntax to call Reducer state
     return (
         <StateContext.Provider value={state}>
             <DispatchContext.Provider value={dispatch}>

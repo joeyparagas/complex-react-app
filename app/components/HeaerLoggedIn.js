@@ -1,20 +1,18 @@
 import React, { useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
-// import ExampleContext from "../ExampleContext";
 import DispatchContext from "../DispatchContext";
+import StateContext from "../StateContext";
 
 function HeaderLoggedIn(props) {
-    // No longer using props, but pulling state from Context
     const appDispatch = useContext(DispatchContext);
-    // const {setLoggedIn} = useContext(ExampelContext);
+    const appState = useContext(StateContext);
 
     function handleLogout() {
-        // useContext to handle logout
         appDispatch({ type: "logout" });
-        // setLoggedIn(false); - no longer needed due to useReducer
-        localStorage.removeItem("complexAppToken");
-        localStorage.removeItem("complexAppUsername");
-        localStorage.removeItem("complexAppAvatar");
+        // remove from localStroage is no longer needed since it's being done in main.js
+        // localStorage.removeItem("complexAppToken");
+        // localStorage.removeItem("complexAppUsername");
+        // localStorage.removeItem("complexAppAvatar");
     }
     return (
         <div className="flex-row my-3 my-md-0">
@@ -28,7 +26,10 @@ function HeaderLoggedIn(props) {
             <a href="#" className="mr-2">
                 <img
                     className="small-header-avatar"
-                    src={localStorage.getItem("complexAppAvatar")}
+                    // src={localStorage.getItem("complexAppAvatar")}
+
+                    // Pull the source from StateContext now being held in main.js
+                    src={appState.user.avatar}
                 />
             </a>
             <Link className="btn btn-sm btn-success mr-2" to="/create-post">

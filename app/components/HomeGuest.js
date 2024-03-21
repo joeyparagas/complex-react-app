@@ -11,7 +11,7 @@ function HomeGuest() {
         e.preventDefault();
         try {
             await Axios.post("/register", {
-                username, // this can also be username: username,
+                username,
                 email,
                 password,
             });

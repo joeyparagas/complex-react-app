@@ -5,7 +5,6 @@ import HeaderLoggedIn from "./HeaerLoggedIn";
 import StateContext from "../StateContext";
 
 function Header(props) {
-    // No longer using props, but pulling state from Context
     const appState = useContext(StateContext);
     return (
         <header className="header-bar bg-primary mb-3">

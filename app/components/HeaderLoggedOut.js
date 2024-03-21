@@ -1,37 +1,31 @@
 import React, { useEffect, useState, useContext } from "react";
 import Axios from "axios";
-// import ExampleContext from "../ExampleContext";
 import DispatchContext from "../DispatchContext";
 
 function HeaderLoggedOut(props) {
-    // Update state of user and pw
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
-    // No longer using props, but pulling state from Context
     const appDispatch = useContext(DispatchContext);
-    // const {setLoggedIn} = useContext(ExampleContext); no longer needed due to useReducer
 
     async function handleSubmit(e) {
         e.preventDefault();
-        // Contact server backend using Axios
         try {
             const response = await Axios.post("/login", {
                 username,
                 password,
             });
             if (response.data) {
-                // If successfully saved data to db, save data to LS
-                localStorage.setItem("complexAppToken", response.data.token);
-                localStorage.setItem(
-                    "complexAppUsername",
-                    response.data.username
-                );
-                localStorage.setItem("complexAppAvatar", response.data.avatar);
-                // setLoggedIn(true); - no longer needed due to useReducer
-                // Using Dispatch to hanlde the login
-                appDispatch({ type: "login" });
+                // localStorage.setItem("complexAppToken", response.data.token);
+                // localStorage.setItem(
+                //     "complexAppUsername",
+                //     response.data.username
+                // );
+                // localStorage.setItem("complexAppAvatar", response.data.avatar);
+
+                // Pushing the data (type:login and data:response.data [could be any name])
+                // back to main.js via dispatch
+                appDispatch({ type: "login", data: response.data });
             } else {
-                // Throw error in console if not load to db
                 console.log("Incorrect username / password");
             }
         } catch (e) {
