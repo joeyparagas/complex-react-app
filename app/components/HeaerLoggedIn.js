@@ -23,7 +23,7 @@ function HeaderLoggedIn(props) {
                 <i className="fas fa-comment"></i>
                 <span className="chat-count-badge text-white"> </span>
             </span>
-            <a href="#" className="mr-2">
+            <Link to={`/profile/${appState.user.username}`} className="mr-2">
                 <img
                     className="small-header-avatar"
                     // src={localStorage.getItem("complexAppAvatar")}
@@ -31,7 +31,7 @@ function HeaderLoggedIn(props) {
                     // Pull the source from StateContext now being held in main.js
                     src={appState.user.avatar}
                 />
-            </a>
+            </Link>
             <Link className="btn btn-sm btn-success mr-2" to="/create-post">
                 Create Post
             </Link>
