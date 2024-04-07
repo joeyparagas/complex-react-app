@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import HeaderLoggedOut from "./HeaderLoggedOut";
-import HeaderLoggedIn from "./HeaerLoggedIn";
+import HeaderLoggedIn from "./HeaderLoggedIn";
 import StateContext from "../StateContext";
 
 function Header(props) {

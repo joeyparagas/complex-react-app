@@ -3,6 +3,7 @@ import Page from "./Page";
 import { useParams } from "react-router-dom";
 import Axios from "axios";
 import StateContext from "../StateContext";
+import ProfilePosts from "./ProfilePosts";
 
 function Profile() {
     const { username } = useParams(); // get parameters from URL - in this case gets username
@@ -24,8 +25,7 @@ function Profile() {
                     token: appState.user.token,
                 });
 
-                // Push data into DOM
-                // console.log(response);
+                // Push response data into State which will update DOM
                 setProfileData(response.data);
             } catch (e) {
                 console.log("There was a problem fetching user data.");
@@ -43,7 +43,6 @@ function Profile() {
                     Follow <i className="fas fa-user-plus"></i>
                 </button>
             </h2>
-
             <div className="profile-nav nav nav-tabs pt-2 mb-4">
                 <a href="#" className="active nav-item nav-link">
                     Posts: {profileData.counts.postCount}
@@ -56,32 +55,7 @@ function Profile() {
                 </a>
             </div>
 
-            <div className="list-group">
-                <a href="#" className="list-group-item list-group-item-action">
-                    <img
-                        className="avatar-tiny"
-                        src={profileData.profileAvatar}
-                    />{" "}
-                    <strong>Example Post #1</strong>
-                    <span className="text-muted small">on 2/10/2020 </span>
-                </a>
-                <a href="#" className="list-group-item list-group-item-action">
-                    <img
-                        className="avatar-tiny"
-                        src={profileData.profileAvatar}
-                    />{" "}
-                    <strong>Example Post #2</strong>
-                    <span className="text-muted small">on 2/10/2020 </span>
-                </a>
-                <a href="#" className="list-group-item list-group-item-action">
-                    <img
-                        className="avatar-tiny"
-                        src={profileData.profileAvatar}
-                    />{" "}
-                    <strong>Example Post #3</strong>
-                    <span className="text-muted small">on 2/10/2020 </span>
-                </a>
-            </div>
+            <ProfilePosts />
         </Page>
     );
 }
