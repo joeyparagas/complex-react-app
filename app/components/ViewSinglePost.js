@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Page from "./Page";
 import Axios from "axios";
 import { useParams, Link } from "react-router-dom";
+import LoadingDotsIcon from "./LoadingDotsIcon";
 
 function ViewSinglePost() {
     // Get id number from URL
@@ -29,7 +30,7 @@ function ViewSinglePost() {
     if (isLoading) {
         return (
             <Page title="...">
-                <div>Loading...</div>
+                <LoadingDotsIcon />
             </Page>
         );
     }
