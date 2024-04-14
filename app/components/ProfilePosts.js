@@ -12,16 +12,27 @@ function ProfilePosts() {
 
     // Fetch data from db via Axios
     useEffect(() => {
+        // Create variable to cancel Axios request
+        const ourRequest = Axios.CancelToken.source();
+
         async function fetchPosts() {
             try {
-                const response = await Axios.get(`/profile/${username}/posts`);
+                const response = await Axios.get(`/profile/${username}/posts`, {
+                    cancelToken: ourRequest.token,
+                }); // used to cancel getting info from server);
                 setIsLoading(false);
                 setPosts(response.data);
             } catch (e) {
-                console.log("There was a problem fetching posts!");
+                console.log(
+                    "There was a problem fetching a post or request was cancelled"
+                );
             }
         }
         fetchPosts();
+        // If user navigates away before Axios loads data, unmount Axios
+        return () => {
+            ourRequest.cancel();
+        };
     }, []);
 
     // If Axios is still loading, show loading text or graphic instead of output
