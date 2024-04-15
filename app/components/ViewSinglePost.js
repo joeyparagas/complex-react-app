@@ -4,6 +4,7 @@ import Axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import LoadingDotsIcon from "./LoadingDotsIcon";
 import ReactMarkdown from "react-markdown";
+import { Tooltip as ReactTooltip } from "react-tooltip";
 
 function ViewSinglePost() {
     // Get id number from URL
@@ -57,16 +58,25 @@ function ViewSinglePost() {
         <Page title={post.title}>
             <div className="d-flex justify-content-between">
                 <h2>{post.title}</h2>
+                {/* Edit/Delete post*/}
                 <span className="pt-2">
-                    <a href="#" className="text-primary mr-2" title="Edit">
+                    <a
+                        href="#"
+                        data-tooltip-content="Edit Post"
+                        data-tooltip-id="edit"
+                        className="text-primary mr-2"
+                    >
                         <i className="fas fa-edit"></i>
                     </a>
+                    <ReactTooltip id="edit" className="custom-tooltip" />{" "}
                     <a
+                        data-tooltip-content="Delete Post"
+                        data-tooltip-id="delete"
                         className="delete-post-button text-danger"
-                        title="Delete"
                     >
                         <i className="fas fa-trash"></i>
                     </a>
+                    <ReactTooltip id="delete" className="custom-tooltip" />
                 </span>
             </div>
 
