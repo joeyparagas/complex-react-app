@@ -100,13 +100,14 @@ function ViewSinglePost() {
                         "p",
                         "br",
                         "strong",
-                        "italic",
+                        "em",
                         "h1",
                         "h2",
                         "h3",
                         "h4",
                         "ul",
                         "li",
+                        "ol",
                         "a",
                     ]}
                 />

@@ -22,6 +22,7 @@ import Profile from "./components/Profile";
 import EditPost from "./components/EditPost";
 
 function Main() {
+    // Global initial State
     const initialState = {
         loggedIn: Boolean(localStorage.getItem("complexAppToken")),
         flashMessages: [],
@@ -32,7 +33,7 @@ function Main() {
         },
     };
 
-    // Using Immer Reducer
+    // Using Global Immer Reducer/dispatch
     function ourReducer(draft, action) {
         switch (action.type) {
             case "login":
@@ -67,7 +68,7 @@ function Main() {
         }
     }, [state.loggedIn]);
 
-    // Contains Header, Footer, FlashMessages (alerts) and Routes
+    // Contains FlashMessages (alerts), Header, Routes, and  Footer
     return (
         <StateContext.Provider value={state}>
             <DispatchContext.Provider value={dispatch}>
