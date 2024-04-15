@@ -1,3 +1,5 @@
+// Template of a page with a container and document title
+
 import React, { useEffect } from "react";
 import Container from "./Container";
 

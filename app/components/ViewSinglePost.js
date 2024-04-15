@@ -1,3 +1,5 @@
+// Page showing the full post data
+
 import React, { useEffect, useState } from "react";
 import Page from "./Page";
 import Axios from "axios";
@@ -60,14 +62,14 @@ function ViewSinglePost() {
                 <h2>{post.title}</h2>
                 {/* Edit/Delete post*/}
                 <span className="pt-2">
-                    <a
-                        href="#"
+                    <Link
+                        to={`/post/${post._id}/edit`}
                         data-tooltip-content="Edit Post"
                         data-tooltip-id="edit"
                         className="text-primary mr-2"
                     >
                         <i className="fas fa-edit"></i>
-                    </a>
+                    </Link>
                     <ReactTooltip id="edit" className="custom-tooltip" />{" "}
                     <a
                         data-tooltip-content="Delete Post"

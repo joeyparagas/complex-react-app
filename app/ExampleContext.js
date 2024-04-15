@@ -1,3 +1,4 @@
+// Used for ContextAPI
 // No longer used due to useReducer
 
 import { createContext } from "react";

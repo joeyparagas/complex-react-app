@@ -1,3 +1,5 @@
+// Landing page for logged in user
+
 import React, { useEffect, useContext } from "react";
 import Page from "./Page";
 import StateContext from "../StateContext";

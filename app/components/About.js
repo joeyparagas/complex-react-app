@@ -1,3 +1,5 @@
+// Single page showing ComplexApp About page
+
 import React, { useEffect } from "react";
 import Page from "./Page";
 

@@ -1,3 +1,5 @@
+// Header for logged out user
+
 import React, { useEffect, useState, useContext } from "react";
 import Axios from "axios";
 import DispatchContext from "../DispatchContext";

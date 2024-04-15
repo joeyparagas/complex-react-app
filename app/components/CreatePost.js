@@ -1,3 +1,5 @@
+// Page to create a post when user is logged in
+
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router";
 import Page from "./Page";

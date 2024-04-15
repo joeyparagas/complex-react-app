@@ -1,3 +1,5 @@
+// Default container for logged in/out header page.
+
 import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import HeaderLoggedOut from "./HeaderLoggedOut";

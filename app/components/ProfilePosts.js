@@ -1,3 +1,5 @@
+// Show a list of posts of the user in their profile page /profile/user
+
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { useParams, Link } from "react-router-dom";
@@ -19,7 +21,7 @@ function ProfilePosts() {
             try {
                 const response = await Axios.get(`/profile/${username}/posts`, {
                     cancelToken: ourRequest.token,
-                }); // used to cancel getting info from server);
+                }); // used to cancel getting info from server
                 setIsLoading(false);
                 setPosts(response.data);
             } catch (e) {

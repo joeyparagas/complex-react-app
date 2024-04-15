@@ -1,3 +1,5 @@
+// Single page showing T&C
+
 import React from "react";
 import Page from "./Page";
 

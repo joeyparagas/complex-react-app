@@ -1,3 +1,5 @@
+// Profile page showing username, follow button, posts, etc
+
 import React, { useEffect, useContext, useState } from "react";
 import Page from "./Page";
 import { useParams } from "react-router-dom";

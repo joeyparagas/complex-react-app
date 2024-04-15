@@ -1,3 +1,5 @@
+// Flash Message of when a post is created
+
 import React, { useEffect } from "react";
 
 function FlashMessages(props) {
