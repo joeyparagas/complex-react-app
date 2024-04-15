@@ -3,6 +3,7 @@ import Page from "./Page";
 import Axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import LoadingDotsIcon from "./LoadingDotsIcon";
+import ReactMarkdown from "react-markdown";
 
 function ViewSinglePost() {
     // Get id number from URL
@@ -26,7 +27,7 @@ function ViewSinglePost() {
                 setIsLoading(false); // set setIsLoading to false skip loading... screen
             } catch (e) {
                 console.log(
-                    "There was a problem fetching a post or request was cancelled"
+                    "There was a problem fetching a post or request was cancelled."
                 );
             }
         }
@@ -80,7 +81,24 @@ function ViewSinglePost() {
                 on {dateFormatted}
             </p>
 
-            <div className="body-content">{post.body}</div>
+            <div className="body-content">
+                <ReactMarkdown
+                    children={post.body}
+                    allowedElements={[
+                        "p",
+                        "br",
+                        "strong",
+                        "italic",
+                        "h1",
+                        "h2",
+                        "h3",
+                        "h4",
+                        "ul",
+                        "li",
+                        "a",
+                    ]}
+                />
+            </div>
         </Page>
     );
 }
