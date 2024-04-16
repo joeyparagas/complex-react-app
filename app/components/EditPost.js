@@ -50,12 +50,17 @@ function EditPost() {
                 return;
             case "titleChange":
                 draft.title.value = action.value;
+                draft.title.hasErrors = false; // remove error if title input box has text
                 return;
             case "bodyChange":
                 draft.body.value = action.value;
+                draft.body.hasErrors = false; // remove error if body textbox has text
                 return;
             case "submitRequest":
-                draft.sendCount++;
+                // if title and body input boxes are empty, then don't submit
+                if (!draft.title.hasErrors && !draft.body.hasErrors) {
+                    draft.sendCount++;
+                }
                 return;
             case "saveRequestStarted":
                 draft.isSaving.saving = true;
@@ -65,15 +70,31 @@ function EditPost() {
                 draft.isSaving.saving = false;
                 draft.isSaving.buttonText = action.value;
                 return;
+            case "titleRules":
+                // check if input box is empty minus white space
+                if (!action.value.trim()) {
+                    draft.title.hasErrors = true;
+                    draft.title.message = "You must provide a title.";
+                }
+                return;
+            case "bodyRules":
+                // check if body textbox is empty minus white space
+                if (!action.value.trim()) {
+                    draft.body.hasErrors = true;
+                    draft.body.message = "You must provide body text.";
+                }
+                return;
         }
     }
 
     const [state, dispatch] = useImmerReducer(ourReducer, originalState); // create dispatch instance
 
-    // onSubmit, update sendCount->triggers update State
+    // onSubmit do the following
     function submitHandler(e) {
         e.preventDefault();
-        dispatch({ type: "submitRequest" });
+        dispatch({ type: "submitRequest" }); // update sendCount->triggers update State
+        dispatch({ type: "titleRules", value: state.title.value }); // check if title input box is !empty
+        dispatch({ type: "bodyRules", value: state.body.value }); // check if body copy input box is !empty
     }
     // Pull post from db server via Axios
     useEffect(() => {
@@ -166,6 +187,13 @@ function EditPost() {
                         <small>Title</small>
                     </label>
                     <input
+                        // Run when input has lost focus
+                        onBlur={(e) =>
+                            dispatch({
+                                type: "titleRules",
+                                value: e.target.value,
+                            })
+                        }
                         // Call dispatch when user edits field
                         onChange={(e) =>
                             dispatch({
@@ -182,6 +210,12 @@ function EditPost() {
                         placeholder=""
                         autoComplete="off"
                     />
+                    {/*Show error if title is blank*/}
+                    {state.title.hasErrors && (
+                        <div className="alert alert-danger small liveValidateMessage">
+                            {state.title.message}
+                        </div>
+                    )}
                 </div>
 
                 <div className="form-group">
@@ -192,6 +226,13 @@ function EditPost() {
                         <small>Body Content</small>
                     </label>
                     <textarea
+                        // Run when input has lost focus
+                        onBlur={(e) =>
+                            dispatch({
+                                type: "bodyRules",
+                                value: e.target.value,
+                            })
+                        }
                         // Call dispatch when user edits field
                         onChange={(e) =>
                             dispatch({
@@ -205,6 +246,12 @@ function EditPost() {
                         className="body-content tall-textarea form-control"
                         type="text"
                     />
+                    {/*Show error if body content is blank*/}
+                    {state.body.hasErrors && (
+                        <div className="alert alert-danger small liveValidateMessage">
+                            {state.body.message}
+                        </div>
+                    )}
                 </div>
 
                 <button
