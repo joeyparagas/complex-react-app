@@ -4,13 +4,17 @@
 import React, { useContext, useEffect, useState } from "react";
 import Page from "./Page";
 import Axios from "axios";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import LoadingDotsIcon from "./LoadingDotsIcon";
 import { useImmerReducer } from "use-immer";
 import StateContext from "../StateContext";
 import DispatchContext from "../DispatchContext";
+import NotFound from "./NotFound";
 
 function EditPost() {
+    // Create instance to redirect user to homepage
+    const navigate = useNavigate();
+
     // Pull user token from global state using useContext & StateContext
     const appState = useContext(StateContext); // make sure to use global name of appState
 
@@ -38,6 +42,7 @@ function EditPost() {
         },
         id: useParams().id, // pulls id from URL
         sendCount: 0, // Axios request counter
+        notFound: false, // When post does not exist
     };
 
     // Use Immer Reducer/dispatch to handle updating state from pulling Axios data from db
@@ -84,6 +89,10 @@ function EditPost() {
                     draft.body.message = "You must provide body text.";
                 }
                 return;
+            case "notFound":
+                // when id in db does not exist
+                draft.notFound = true;
+                return;
         }
     }
 
@@ -96,7 +105,8 @@ function EditPost() {
         dispatch({ type: "titleRules", value: state.title.value }); // check if title input box is !empty
         dispatch({ type: "bodyRules", value: state.body.value }); // check if body copy input box is !empty
     }
-    // Pull post from db server via Axios
+
+    // Pull post data from db server via Axios to put into input boxes
     useEffect(() => {
         // Create variable to cancel Axios request
         const ourRequest = Axios.CancelToken.source();
@@ -106,8 +116,24 @@ function EditPost() {
                 const response = await Axios.get(`/post/${state.id}`, {
                     cancelToken: ourRequest.token, // used to cancel getting info from server
                 });
-                // Call dispatch to update data in state once Axios receives data
-                dispatch({ type: "fetchComplete", value: response.data });
+                // Create condition to check if id exists in db
+                if (response.data) {
+                    // Call dispatch to update data in state once Axios receives data
+                    dispatch({ type: "fetchComplete", value: response.data });
+                    // Check if correct user is editing post
+                    if (
+                        appState.user.username != response.data.author.username
+                    ) {
+                        dispatch({
+                            type: "flasthMessage",
+                            value: "You do not have permission to edit this post.",
+                        });
+                        // Redirect to homepage
+                        navigate("/");
+                    }
+                } else {
+                    dispatch({ type: "notFound" });
+                }
             } catch (e) {
                 console.log(
                     "There was a problem fetching a post or request was cancelled."
@@ -115,6 +141,7 @@ function EditPost() {
             }
         }
         fetchPost();
+
         // If user navigates away before Axios loads data, unmount Axios
         return () => {
             ourRequest.cancel();
@@ -170,6 +197,11 @@ function EditPost() {
         }
     }, [state.sendCount]); // Run when state.sendCount is updated
 
+    // If id does not exist, show this 404 page
+    if (state.notFound) {
+        return <NotFound />;
+    }
+
     // Initial loading of page using current state
     if (state.isFetching) {
         return (
@@ -181,7 +213,11 @@ function EditPost() {
 
     return (
         <Page title="Edit Post">
-            <form onSubmit={submitHandler}>
+            <Link className="small font-weight-bold" to={`/post/${state.id}`}>
+                &laquo; Back to post.
+            </Link>
+
+            <form className="mt-3" onSubmit={submitHandler}>
                 <div className="form-group">
                     <label htmlFor="post-title" className="text-muted mb-1">
                         <small>Title</small>

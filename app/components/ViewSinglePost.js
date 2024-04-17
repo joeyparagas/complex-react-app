@@ -7,6 +7,7 @@ import { useParams, Link } from "react-router-dom";
 import LoadingDotsIcon from "./LoadingDotsIcon";
 import ReactMarkdown from "react-markdown";
 import { Tooltip as ReactTooltip } from "react-tooltip";
+import NotFound from "./NotFound";
 
 function ViewSinglePost() {
     // Get id number from URL
@@ -40,6 +41,11 @@ function ViewSinglePost() {
             ourRequest.cancel();
         };
     }, []);
+
+    // If it's not loading and post !exist, show this 404 page
+    if (!isLoading && !post) {
+        return <NotFound />;
+    }
 
     // Initial loading of page
     if (isLoading) {
