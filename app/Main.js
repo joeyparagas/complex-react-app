@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Axios from "axios";
 Axios.defaults.baseURL = "http://localhost:8080";
 
+// Global State and Dispatch
 import StateContext from "./StateContext";
 import DispatchContext from "./DispatchContext";
 
@@ -71,6 +72,8 @@ function Main() {
 
     // Contains FlashMessages (alerts), Header, Routes, and  Footer
     return (
+        // StateContext wraps around to use Global State (appState)
+        // DispatchContext wraps around to use Global Dispatch (appDispatch)
         <StateContext.Provider value={state}>
             <DispatchContext.Provider value={dispatch}>
                 <BrowserRouter>

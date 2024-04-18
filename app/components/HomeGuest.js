@@ -19,7 +19,9 @@ function HomeGuest() {
             });
             console.log("User created.");
         } catch (e) {
-            console.log("There was an error.");
+            console.log(
+                "There was an error or password is less than 8 characters."
+            );
         }
     }
 

@@ -124,8 +124,9 @@ function EditPost() {
                     if (
                         appState.user.username != response.data.author.username
                     ) {
-                        dispatch({
-                            type: "flasthMessage",
+                        // Call global appDispatch to show error
+                        appDispatch({
+                            type: "flashMessage",
                             value: "You do not have permission to edit this post.",
                         });
                         // Redirect to homepage

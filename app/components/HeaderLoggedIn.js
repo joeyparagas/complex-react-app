@@ -11,10 +11,6 @@ function HeaderLoggedIn(props) {
 
     function handleLogout() {
         appDispatch({ type: "logout" });
-        // remove from localStroage is no longer needed since it's being done in main.js
-        // localStorage.removeItem("complexAppToken");
-        // localStorage.removeItem("complexAppUsername");
-        // localStorage.removeItem("complexAppAvatar");
     }
     return (
         <div className="flex-row my-3 my-md-0">
