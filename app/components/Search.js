@@ -1,8 +1,18 @@
 import React, { useContext, useEffect } from "react";
 import DispatchContext from "../DispatchContext";
+import { useImmer } from "use-immer";
 
 function Search() {
-    const appDispatch = useContext(DispatchContext);
+    const appDispatch = useContext(DispatchContext); // globalDispatch
+
+    // Single State for search and results instead of different useStates for each section
+    // A mix of using a reducer and state in one
+    const [state, setState] = useImmer({
+        searchTerm: "", // stores what the user types in search box
+        results: [], // shows json server results in search results section
+        show: "neither", // shows the loading screen in search results section
+        requestCount: 0, // counts number of requests
+    });
 
     function handleCloseIcon(e) {
         e.preventDefault;
@@ -27,6 +37,43 @@ function Search() {
         }
     }
 
+    // Run when user types something in search box, put it into state
+    function handleInput(e) {
+        const value = e.target.value;
+        // Create a "draft" to mutate setState
+        // Similar to using a reducer but skips straight to editing the state
+        setState((draft) => {
+            draft.searchTerm = value;
+        });
+    }
+
+    // Show state search result when state is updated
+    useEffect(() => {
+        // set a delay to results 3 seconds after typing
+        const delay = setTimeout(() => {
+            // increase requestCount by 1
+            setState((draft) => {
+                draft.requestCount++;
+            });
+            console.log(state.requestCount);
+        }, 3000);
+
+        // return function will run before state.SearchTerm gets next update (user typing)
+        // removes delay function and shows the current state.searchTerm
+        return () => {
+            console.log("done");
+            clearTimeout(delay);
+        };
+    }, [state.searchTerm]);
+
+    // Check when reqeustCount has been udpated
+    useEffect(() => {
+        // Make sure requestCount > 0
+        if (state.requestCount) {
+            // Send Axios get request to server
+        }
+    }, [state.requestCount]);
+
     return (
         <div className="search-overlay">
             <div className="search-overlay-top shadow-sm">
@@ -38,6 +85,7 @@ function Search() {
                         <i className="fas fa-search"></i>
                     </label>
                     <input
+                        onChange={handleInput}
                         autofocus
                         type="text"
                         autoComplete="off"
