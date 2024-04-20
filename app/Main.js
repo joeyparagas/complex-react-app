@@ -22,6 +22,7 @@ import FlashMessages from "./components/FlashMessages";
 import Profile from "./components/Profile";
 import EditPost from "./components/EditPost";
 import NotFound from "./components/NotFound";
+import Search from "./components/Search";
 
 function Main() {
     // Global initial State
@@ -33,6 +34,7 @@ function Main() {
             username: localStorage.getItem("complexAppUsername"),
             avatar: localStorage.getItem("complexAppAvatar"),
         },
+        isSearchOpen: false,
     };
 
     // Using Global Immer Reducer/dispatch
@@ -51,6 +53,12 @@ function Main() {
                 return;
             case "flashMessage":
                 draft.flashMessages.push(action.value);
+                return;
+            case "openSearch":
+                draft.isSearchOpen = true;
+                return;
+            case "closeSearch":
+                draft.isSearchOpen = false;
                 return;
         }
     }
@@ -96,6 +104,7 @@ function Main() {
                         {/* 404 NotFound route has to be the last "catch-all" route */}
                         <Route path="*" element={<NotFound />} />
                     </Routes>
+                    {state.isSearchOpen ? <Search /> : ""}
                     <Footer />
                 </BrowserRouter>
             </DispatchContext.Provider>
