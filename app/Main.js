@@ -1,7 +1,9 @@
+// Libraries & APIs
 import React, { useState, useReducer, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { useImmerReducer } from "use-immer";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { CSSTransition } from "react-transition-group";
 import Axios from "axios";
 Axios.defaults.baseURL = "http://localhost:8080";
 
@@ -104,7 +106,19 @@ function Main() {
                         {/* 404 NotFound route has to be the last "catch-all" route */}
                         <Route path="*" element={<NotFound />} />
                     </Routes>
-                    {state.isSearchOpen ? <Search /> : ""}
+                    <CSSTransition
+                        timeout={330} // timeout 330ms
+                        in={state.isSearchOpen} // conditional check to show <Search />
+                        classNames="search-overlay"
+                        unmountOnExit // unmount entire component when closed
+                    >
+                        <Search />
+                    </CSSTransition>
+
+                    {
+                        // This is an older method not using CSSTransition
+                        // {state.isSearchOpen ? <Search /> : ""}
+                    }
                     <Footer />
                 </BrowserRouter>
             </DispatchContext.Provider>
