@@ -1,3 +1,5 @@
+// Search Component found in Header
+
 import React, { useContext, useEffect } from "react";
 import DispatchContext from "../DispatchContext";
 import { useImmer } from "use-immer";
