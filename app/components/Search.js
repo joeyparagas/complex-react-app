@@ -80,7 +80,6 @@ function Search() {
                     );
                     setState((draft) => {
                         draft.results = response.data;
-                        console.log(draft.results);
                         // if results exist, update state to show html
                         draft.show = "results";
                     });
