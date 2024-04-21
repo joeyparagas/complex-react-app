@@ -32,7 +32,9 @@ function Profile() {
         // default profile data
         profileData: {
             profileUsername: "...",
-            profileAvatar: "https://gravatar.com/avatar/placeholder?s=128",
+            // profileAvatar: "https://gravatar.com/avatar/placeholder?s=128",
+            profileAvatar:
+                "https://gravatar.com/userimage/249631435/5a4ce12d3899f71f064f698a1bc7000a.jpeg?size=128",
             isFollowing: false,
             counts: { postCount: "", followerCount: "", followingCount: "" },
         },

@@ -17,12 +17,12 @@ function HeaderLoggedOut(props) {
                 password,
             });
             if (response.data) {
-                // localStorage.setItem("complexAppToken", response.data.token);
+                // localStorage.setItem("SocietyCentralToken", response.data.token);
                 // localStorage.setItem(
-                //     "complexAppUsername",
+                //     "SocietyCentralUsername",
                 //     response.data.username
                 // );
-                // localStorage.setItem("complexAppAvatar", response.data.avatar);
+                // localStorage.setItem("SocietyCentralAvatar", response.data.avatar);
 
                 // Pushing the data (type:login and data:response.data [could be any name])
                 // back to main.js via dispatch

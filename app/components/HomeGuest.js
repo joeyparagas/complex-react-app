@@ -20,7 +20,7 @@ function HomeGuest() {
             console.log("User created.");
         } catch (e) {
             console.log(
-                "There was an error or password is less than 8 characters."
+                "There was an error or password must be 12+ characters."
             );
         }
     }
@@ -87,14 +87,14 @@ function HomeGuest() {
                                 name="password"
                                 className="form-control"
                                 type="password"
-                                placeholder="Create a password"
+                                placeholder="Create a password 12+ characters"
                             />
                         </div>
                         <button
                             type="submit"
                             className="py-3 mt-4 btn btn-lg btn-success btn-block"
                         >
-                            Sign up for ComplexApp
+                            Sign up for Society Central
                         </button>
                     </form>
                 </div>

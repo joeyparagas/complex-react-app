@@ -29,12 +29,12 @@ import Search from "./components/Search";
 function Main() {
     // Global initial State
     const initialState = {
-        loggedIn: Boolean(localStorage.getItem("complexAppToken")),
+        loggedIn: Boolean(localStorage.getItem("SocietyCentralToken")),
         flashMessages: [],
         user: {
-            token: localStorage.getItem("complexAppToken"),
-            username: localStorage.getItem("complexAppUsername"),
-            avatar: localStorage.getItem("complexAppAvatar"),
+            token: localStorage.getItem("SocietyCentralToken"),
+            username: localStorage.getItem("SocietyCentralUsername"),
+            avatar: localStorage.getItem("SocietyCentralAvatar"),
         },
         isSearchOpen: false,
     };
@@ -69,14 +69,14 @@ function Main() {
     // Take the draft.user state from ourReducer "loggedIn" state and copy it to localStorage
     useEffect(() => {
         if (state.loggedIn) {
-            localStorage.setItem("complexAppToken", state.user.token);
-            localStorage.setItem("complexAppUsername", state.user.username);
-            localStorage.setItem("complexAppAvatar", state.user.avatar);
+            localStorage.setItem("SocietyCentralToken", state.user.token);
+            localStorage.setItem("SocietyCentralUsername", state.user.username);
+            localStorage.setItem("SocietyCentralAvatar", state.user.avatar);
         } else {
             // when logged out, remove from localStorage
-            localStorage.removeItem("complexAppToken");
-            localStorage.removeItem("complexAppUsername");
-            localStorage.removeItem("complexAppAvatar");
+            localStorage.removeItem("SocietyCentralToken");
+            localStorage.removeItem("SocietyCentralUsername");
+            localStorage.removeItem("SocietyCentralAvatar");
         }
     }, [state.loggedIn]);
 

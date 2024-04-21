@@ -5,7 +5,7 @@ import Container from "./Container";
 
 function Page(props) {
     useEffect(() => {
-        document.title = `${props.title} | ComplexApp`;
+        document.title = `${props.title} | Society Central`;
         window.scroll(0, 0);
     }, [props.title]);
 

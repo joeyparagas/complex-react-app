@@ -52,7 +52,7 @@ function HeaderLoggedIn(props) {
                 <img
                     className="small-header-avatar"
                     // pull straight from localStorage
-                    // src={localStorage.getItem("complexAppAvatar")}
+                    // src={localStorage.getItem("SocietyCentralAvatar")}
 
                     // Pull the source from StateContext now being held in main.js
                     src={appState.user.avatar}

@@ -35,7 +35,7 @@ function ViewSinglePost() {
                 const response = await Axios.get(`/post/${id}`, {
                     cancelToken: ourRequest.token, // used to cancel getting info from server
                 });
-                setPost(response.data); //show data from db
+                setPost(response.data); //set db data to state
                 setIsLoading(false); // set setIsLoading to false skip loading... screen
             } catch (e) {
                 console.log(

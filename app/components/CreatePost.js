@@ -21,7 +21,7 @@ function CreatePost(props) {
             const response = await Axios.post("/create-post", {
                 title,
                 body,
-                // token: localStorage.getItem("complexAppToken"),
+                // token: localStorage.getItem("SocietyCentralToken"),
 
                 // get data from State Context instead of localStorage
                 token: appState.user.token,
