@@ -1,6 +1,8 @@
 import React, { useContext, useEffect } from "react";
 import DispatchContext from "../DispatchContext";
 import { useImmer } from "use-immer";
+import Axios from "axios";
+import { Link } from "react-router-dom";
 
 function Search() {
     const appDispatch = useContext(DispatchContext); // globalDispatch
@@ -29,6 +31,73 @@ function Search() {
         };
     }, []);
 
+    // Show state search result when state is updated
+    useEffect(() => {
+        // Trim empty white space
+        // .trim() prevents state.searchTerm from changing
+        if (state.searchTerm.trim()) {
+            // Show loading icon
+            setState((draft) => {
+                draft.show = "loading";
+            });
+
+            // set a delay to results 750 milliseconds after typing
+            const delay = setTimeout(() => {
+                // increase requestCount by 1 if letters are input into search box
+                setState((draft) => {
+                    // if (state.searchTerm.length) {
+                    draft.requestCount++;
+                    // }
+                });
+            }, 750);
+
+            // return function will run before state.SearchTerm gets next update (user typing)
+            // removes delay function and shows the current state.searchTerm
+            return () => {
+                clearTimeout(delay);
+            };
+        } else {
+            setState((draft) => {
+                draft.show = "neither";
+            });
+        }
+    }, [state.searchTerm]);
+
+    // // Check when reqeustCount has been udpated
+    useEffect(() => {
+        // Make sure requestCount > 0, meaning its on the search page
+        if (state.requestCount) {
+            // Create variable to cancel Axios request
+            const ourRequest = Axios.CancelToken.source();
+            // Send Axios get request to server
+            // This only searches user posts not names or anything else
+            async function fetchResults() {
+                try {
+                    const response = await Axios.post(
+                        "/search",
+                        { searchTerm: state.searchTerm },
+                        { cancelToken: ourRequest.token }
+                    );
+                    setState((draft) => {
+                        draft.results = response.data;
+                        console.log(draft.results);
+                        // if results exist, update state to show html
+                        draft.show = "results";
+                    });
+                } catch (e) {
+                    console.log(
+                        "There was a problem returning search results from db."
+                    );
+                }
+            }
+            fetchResults();
+            // Unmount Axios when complete
+            return () => {
+                ourRequest.cancel();
+            };
+        }
+    }, [state.requestCount]);
+
     // Use ESC key to close search
     function searchKeyPressHandler(e) {
         // Check if ESC is is pressed
@@ -47,33 +116,6 @@ function Search() {
         });
     }
 
-    // Show state search result when state is updated
-    useEffect(() => {
-        // set a delay to results 3 seconds after typing
-        const delay = setTimeout(() => {
-            // increase requestCount by 1
-            setState((draft) => {
-                draft.requestCount++;
-            });
-            console.log(state.requestCount);
-        }, 3000);
-
-        // return function will run before state.SearchTerm gets next update (user typing)
-        // removes delay function and shows the current state.searchTerm
-        return () => {
-            console.log("done");
-            clearTimeout(delay);
-        };
-    }, [state.searchTerm]);
-
-    // Check when reqeustCount has been udpated
-    useEffect(() => {
-        // Make sure requestCount > 0
-        if (state.requestCount) {
-            // Send Axios get request to server
-        }
-    }, [state.requestCount]);
-
     return (
         <div className="search-overlay">
             <div className="search-overlay-top shadow-sm">
@@ -86,7 +128,7 @@ function Search() {
                     </label>
                     <input
                         onChange={handleInput}
-                        autofocus
+                        autoFocus
                         type="text"
                         autoComplete="off"
                         id="live-search-field"
@@ -104,51 +146,77 @@ function Search() {
 
             <div className="search-overlay-bottom">
                 <div className="container container--narrow py-3">
-                    <div className="live-search-results live-search-results--visible">
-                        <div className="list-group shadow-sm">
-                            <div className="list-group-item active">
-                                <strong>Search Results</strong> (3 items found)
+                    {/* Conditional loading animation */}
+                    <div
+                        className={
+                            "circle-loader " +
+                            (state.show == "loading"
+                                ? "circle-loader--visible"
+                                : "")
+                        }
+                    ></div>
+
+                    {/* Conditional show results */}
+                    <div
+                        className={
+                            "live-search-results" +
+                            (state.show == "results"
+                                ? "alive-search-results--visible"
+                                : "")
+                        }
+                    >
+                        {Boolean(state.results.length) && (
+                            <div className="list-group shadow-sm">
+                                <div className="list-group-item active">
+                                    <strong>Search Results</strong> (
+                                    {/*Dynamic search results*/}
+                                    {state.results.length}{" "}
+                                    {state.results.length > 1
+                                        ? "items"
+                                        : "item"}{" "}
+                                    found)
+                                </div>
+                                {state.results.map((post) => {
+                                    // Get and format post dates
+                                    const date = new Date(post.createdDate);
+                                    const dateFormatted = `${
+                                        date.getMonth() + 1
+                                    }/${date.getDate()}/${date.getFullYear()}`;
+
+                                    return (
+                                        <Link
+                                            // Close search on click
+                                            onClick={() =>
+                                                appDispatch({
+                                                    type: "closeSearch",
+                                                })
+                                            }
+                                            key={post._id}
+                                            to={`/post/${post._id}`}
+                                            className="list-group-item list-group-item-action"
+                                        >
+                                            <img
+                                                className="avatar-tiny"
+                                                src={post.author.avatar}
+                                            />
+                                            <strong>{post.title}</strong>
+                                            <span className="text-muted small">
+                                                {" "}
+                                                by {
+                                                    post.author.username
+                                                } on {dateFormatted}
+                                            </span>
+                                        </Link>
+                                    );
+                                })}
                             </div>
-                            <a
-                                href="#"
-                                className="list-group-item list-group-item-action"
-                            >
-                                <img
-                                    className="avatar-tiny"
-                                    src="https://gravatar.com/avatar/b9408a09298632b5151200f3449434ef?s=128"
-                                />{" "}
-                                <strong>Example Post #1</strong>
-                                <span className="text-muted small">
-                                    by brad on 2/10/2020{" "}
-                                </span>
-                            </a>
-                            <a
-                                href="#"
-                                className="list-group-item list-group-item-action"
-                            >
-                                <img
-                                    className="avatar-tiny"
-                                    src="https://gravatar.com/avatar/b9216295c1e3931655bae6574ac0e4c2?s=128"
-                                />{" "}
-                                <strong>Example Post #2</strong>
-                                <span className="text-muted small">
-                                    by barksalot on 2/10/2020{" "}
-                                </span>
-                            </a>
-                            <a
-                                href="#"
-                                className="list-group-item list-group-item-action"
-                            >
-                                <img
-                                    className="avatar-tiny"
-                                    src="https://gravatar.com/avatar/b9408a09298632b5151200f3449434ef?s=128"
-                                />{" "}
-                                <strong>Example Post #3</strong>
-                                <span className="text-muted small">
-                                    by brad on 2/10/2020{" "}
-                                </span>
-                            </a>
-                        </div>
+                        )}
+                        {!Boolean(state.results.length) && (
+                            <p className="alert alert-danger text-center shadow-sm">
+                                No results found when searching for:
+                                <br /> <em>{state.searchTerm}</em>
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>

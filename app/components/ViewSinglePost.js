@@ -48,7 +48,7 @@ function ViewSinglePost() {
         return () => {
             ourRequest.cancel();
         };
-    }, []);
+    }, [id]); // id makes it dependent on search result
 
     // If it's not loading and post !exist, show this 404 page
     if (!isLoading && !post) {
