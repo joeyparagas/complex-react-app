@@ -25,6 +25,7 @@ import Profile from "./components/Profile";
 import EditPost from "./components/EditPost";
 import NotFound from "./components/NotFound";
 import Search from "./components/Search";
+import Chat from "./components/Chat";
 
 function Main() {
     // Global initial State
@@ -36,7 +37,8 @@ function Main() {
             username: localStorage.getItem("SocietyCentralUsername"),
             avatar: localStorage.getItem("SocietyCentralAvatar"),
         },
-        isSearchOpen: false,
+        isSearchOpen: false, //default search closed
+        isChatOpen: false, // default chat closed
     };
 
     // Using Global Immer Reducer/dispatch
@@ -61,6 +63,12 @@ function Main() {
                 return;
             case "closeSearch":
                 draft.isSearchOpen = false;
+                return;
+            case "toggleChat":
+                draft.isChatOpen = !draft.isChatOpen;
+                return;
+            case "closeChat":
+                draft.isChatOpen = false;
                 return;
         }
     }
@@ -114,11 +122,11 @@ function Main() {
                     >
                         <Search />
                     </CSSTransition>
-
                     {
                         // This is an older method not using CSSTransition
                         // {state.isSearchOpen ? <Search /> : ""}
                     }
+                    <Chat />
                     <Footer />
                 </BrowserRouter>
             </DispatchContext.Provider>

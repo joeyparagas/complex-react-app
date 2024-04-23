@@ -34,6 +34,9 @@ function HeaderLoggedIn(props) {
             <ReactTooltip id="search" className="custom-tooltip" />{" "}
             {/*Chat Icon*/}
             <span
+                onClick={() => {
+                    appDispatch({ type: "toggleChat" });
+                }}
                 data-tooltip-id="chat"
                 data-tooltip-content="Chat with Others"
                 className="mr-2 header-chat-icon text-white"
