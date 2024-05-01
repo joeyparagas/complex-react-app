@@ -2,6 +2,7 @@ import React, { useEffect, useContext, useRef } from "react";
 import StateContext from "../StateContext";
 import DispatchContext from "../DispatchContext";
 import { useImmer } from "use-immer";
+import { Link } from "react-router-dom";
 import io from "socket.io-client";
 
 // Establish Socket.io connection w/ browser and backend server
@@ -11,6 +12,7 @@ function Chat() {
     const appDispatch = useContext(DispatchContext);
     const appState = useContext(StateContext);
     const chatField = useRef(null);
+    const chatLog = useRef(null);
     const [state, setState] = useImmer({
         fieldValue: "",
         chatMessages: [],
@@ -18,12 +20,32 @@ function Chat() {
 
     // Autofocus on Chat input box when Chat is open
     // Can't use autofocus due to it always being in DOM (unlike Search)
+    // Dependency is when the chat window is opened
     useEffect(() => {
-        // If Chat is open, focus on input element w/useRef
+        // If Chat is open:
         if (appState.isChatOpen) {
+            // focus on input element w/useRef
             chatField.current.focus();
+
+            // set chat count number = 0
+            appDispatch({ type: "clearUnreadChatCount" });
         }
     }, [appState.isChatOpen]);
+
+    // Auto scroll chat window down to latest chat message when overflow
+    // Dependency is when chatMessages is updated
+    useEffect(() => {
+        // Get the current height of chatLog div and
+        // set it equal to the amount of pixels to scroll down from the top
+        chatLog.current.scrollTop = chatLog.current.scrollHeight;
+
+        // Check for unread chat messages:
+        // Check if message array exists (means there are new messages) and if chat is closed
+        if (state.chatMessages.length && !appState.isChatOpen) {
+            // Increment chat count by 1
+            appDispatch({ type: "incrementUnreadChatCount" });
+        }
+    }, [state.chatMessages]);
 
     // Function to check state on chat input box
     function handleFieldChange(e) {
@@ -88,14 +110,16 @@ function Chat() {
                     <i className="fas fa-times-circle"></i>
                 </span>
             </div>
-            <div id="chat" className="chat-log">
+
+            {/* Create chatLog reference to have chat auto-scroll down to latest message */}
+            <div id="chat" className="chat-log" ref={chatLog}>
                 {
                     // Loop through chat messages for primary user via map function
                     state.chatMessages.map((message, index) => {
                         // Check if the current/primary user is the same as app-wide user
                         if (message.username == appState.user.username) {
                             return (
-                                <div className="chat-self">
+                                <div key={index} className="chat-self">
                                     <div className="chat-message">
                                         <div className="chat-message-inner">
                                             {message.message}
@@ -110,20 +134,22 @@ function Chat() {
                         } else {
                             // if not primary user, then return other user
                             return (
-                                <div className="chat-other">
-                                    <a href="#">
+                                <div key={index} className="chat-other">
+                                    <Link to={`/profile/${message.username}`}>
                                         <img
                                             className="avatar-tiny"
                                             src={message.avatar}
                                         />
-                                    </a>
+                                    </Link>
                                     <div className="chat-message">
                                         <div className="chat-message-inner">
-                                            <a href="#">
+                                            <Link
+                                                to={`/profile/${message.username}`}
+                                            >
                                                 <strong>
                                                     {message.username}:{" "}
                                                 </strong>
-                                            </a>
+                                            </Link>
                                             {message.message}
                                         </div>
                                     </div>

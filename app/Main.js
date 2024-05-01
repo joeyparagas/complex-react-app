@@ -37,8 +37,9 @@ function Main() {
             username: localStorage.getItem("SocietyCentralUsername"),
             avatar: localStorage.getItem("SocietyCentralAvatar"),
         },
-        isSearchOpen: false, //default search closed
+        isSearchOpen: false, // default search closed
         isChatOpen: false, // default chat closed
+        unreadChatCount: 0, // count number of chat messages unread
     };
 
     // Using Global Immer Reducer/dispatch
@@ -69,6 +70,12 @@ function Main() {
                 return;
             case "closeChat":
                 draft.isChatOpen = false;
+                return;
+            case "incrementUnreadChatCount":
+                draft.unreadChatCount++;
+                return;
+            case "clearUnreadChatCount":
+                draft.unreadChatCount = 0;
                 return;
         }
     }

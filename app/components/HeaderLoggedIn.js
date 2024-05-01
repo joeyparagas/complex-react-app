@@ -21,7 +21,7 @@ function HeaderLoggedIn(props) {
 
     return (
         <div className="flex-row my-3 my-md-0">
-            {/*Search Icon*/}
+            {/* Search Icon */}
             <a
                 data-tooltip-id="search"
                 data-tooltip-content="Search Site"
@@ -32,17 +32,31 @@ function HeaderLoggedIn(props) {
                 <i className="fas fa-search"></i>
             </a>
             <ReactTooltip id="search" className="custom-tooltip" />{" "}
-            {/*Chat Icon*/}
+            {/* Chat Icon - click to toggle, change to red when chatcount is > 0 */}
             <span
                 onClick={() => {
                     appDispatch({ type: "toggleChat" });
                 }}
                 data-tooltip-id="chat"
                 data-tooltip-content="Chat with Others"
-                className="mr-2 header-chat-icon text-white"
+                className={
+                    "mr-2 header-chat-icon " +
+                    (appState.unreadChatCount ? "text-danger" : "text-white")
+                }
             >
                 <i className="fas fa-comment"></i>
-                <span className="chat-count-badge text-white"> </span>
+                {
+                    // Output number of unread messages up to 9, else 9+
+                    appState.unreadChatCount ? (
+                        <span className="chat-count-badge text-white">
+                            {appState.unreadChatCount < 10
+                                ? appState.unreadChatCount
+                                : "9+"}
+                        </span>
+                    ) : (
+                        ""
+                    )
+                }
             </span>
             <ReactTooltip id="chat" className="custom-tooltip" />{" "}
             {/*User Avatar or view posts*/}
