@@ -2,6 +2,10 @@ import React, { useEffect, useContext, useRef } from "react";
 import StateContext from "../StateContext";
 import DispatchContext from "../DispatchContext";
 import { useImmer } from "use-immer";
+import io from "socket.io-client";
+
+// Establish Socket.io connection w/ browser and backend server
+const socket = io("http://localhost:8080");
 
 function Chat() {
     const appDispatch = useContext(DispatchContext);
@@ -34,7 +38,14 @@ function Chat() {
     // Function to check submitting chat text (click enter)
     function handleSubmit(e) {
         e.preventDefault();
-        // Send message to chat server
+
+        // Send message to chat server.
+        // "chatFromBrowser" is a specific name programmed into backend
+        socket.emit("chatFromBrowser", {
+            message: state.fieldValue,
+            token: appState.user.token,
+        });
+
         // Update state
         setState((draft) => {
             // Push each message into message array
@@ -46,6 +57,16 @@ function Chat() {
             draft.fieldValue = "";
         });
     }
+
+    // Setup receiving state/data from chat server w/ socket.io
+    useEffect(() => {
+        // "chatFromServer" is a specific name programmed into backend
+        socket.on("chatFromServer", (message) => {
+            setState((draft) => {
+                draft.chatMessages.push(message);
+            });
+        });
+    }, []);
 
     return (
         <div
@@ -93,15 +114,17 @@ function Chat() {
                                     <a href="#">
                                         <img
                                             className="avatar-tiny"
-                                            src="https://gravatar.com/avatar/b9216295c1e3931655bae6574ac0e4c2?s=128"
+                                            src={message.avatar}
                                         />
                                     </a>
                                     <div className="chat-message">
                                         <div className="chat-message-inner">
                                             <a href="#">
-                                                <strong>barksalot:</strong>
+                                                <strong>
+                                                    {message.username}:{" "}
+                                                </strong>
                                             </a>
-                                            Hey, I am good, how about you?
+                                            {message.message}
                                         </div>
                                     </div>
                                 </div>
