@@ -1,10 +1,11 @@
 // Default Sign In landing page for unregistered user
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Page from "./Page";
 import Axios from "axios";
 import { useImmerReducer } from "use-immer";
 import { CSSTransition } from "react-transition-group";
+import DispatchContext from "../DispatchContext";
 
 function HomeGuest() {
     // Old Method 1 to register a new user
@@ -32,6 +33,8 @@ function HomeGuest() {
     // }
 
     // Method 2 to register a user with validation
+    const appDispatch = useContext(DispatchContext);
+
     // Crate state of registration
     const initialState = {
         username: {
@@ -88,7 +91,8 @@ function HomeGuest() {
                 }
 
                 // If no errors, check db if username exists by incrementing checkCount
-                if (!draft.username.hasErrors) {
+                // Don't run on form submit
+                if (!draft.username.hasErrors && !action.noValidation) {
                     draft.username.checkCount++;
                 }
                 return;
@@ -112,8 +116,10 @@ function HomeGuest() {
                     draft.email.hasErrors = true;
                     draft.email.message = "Not a valid email";
                 }
+
                 // If no errors, check db if email exists by incrementing checkCount
-                if (!draft.email.hasErrors) {
+                // Don't run on form submit
+                if (!draft.email.hasErrors && !action.noValidation) {
                     draft.email.checkCount++;
                 }
                 return;
@@ -145,6 +151,16 @@ function HomeGuest() {
                 }
                 return;
             case "submitForm":
+                // If validation is good, submit data by incrementing submitCount
+                if (
+                    !draft.username.hasErrors &&
+                    draft.username.isUnique &&
+                    !draft.email.hasErrors &&
+                    draft.email.isUnique &&
+                    !draft.password.hasErrors
+                ) {
+                    draft.submitCount++;
+                }
                 return;
         }
     }
@@ -183,7 +199,7 @@ function HomeGuest() {
         }
     }, [state.password.value]);
 
-    // Check if username exists and run when checkCount has been udpated
+    // Check if username/email exists and run when checkCount has been udpated
     useEffect(() => {
         // Make sure checkCount exists
         if (state.username.checkCount) {
@@ -207,7 +223,6 @@ function HomeGuest() {
                     );
                 }
             }
-
             fetchResults();
             // Unmount Axios when complete
             return () => {
@@ -216,7 +231,6 @@ function HomeGuest() {
         }
     }, [state.username.checkCount]);
 
-    // Check if email exists and run when checkCount has been udpated
     useEffect(() => {
         // Make sure checkCount exists
         if (state.email.checkCount) {
@@ -240,7 +254,6 @@ function HomeGuest() {
                     );
                 }
             }
-
             fetchResults();
             // Unmount Axios when complete
             return () => {
@@ -249,8 +262,60 @@ function HomeGuest() {
         }
     }, [state.email.checkCount]);
 
+    // Submit data after validation and run when submitCount has been udpated
+    useEffect(() => {
+        // Make sure submitCount exists
+        if (state.submitCount) {
+            // Create variable to cancel Axios request
+            const ourRequest = Axios.CancelToken.source();
+            // Send Axios get request to server to get usernames
+            async function fetchResults() {
+                try {
+                    const response = await Axios.post(
+                        "/register",
+                        {
+                            username: state.username.value,
+                            email: state.email.value,
+                            password: state.password.value,
+                        },
+                        { cancelToken: ourRequest.token }
+                    );
+                    appDispatch({ type: "login", data: response.data });
+                    appDispatch({
+                        type: "flashMessage",
+                        value: "Congratulations! Welcome to Society Central.",
+                    });
+                    console.log("User created.");
+                } catch (e) {
+                    console.log("There was a problem submitting data to db.");
+                }
+            }
+            fetchResults();
+            // Unmount Axios when complete
+            return () => {
+                ourRequest.cancel();
+            };
+        }
+    }, [state.submitCount]);
+
     function handleSubmit(e) {
         e.preventDefault();
+        // run validation on submit
+        dispatch({ type: "usernameImmediately", value: state.username.value });
+        dispatch({
+            type: "usernameAfterDelay",
+            value: state.username.value,
+            noValidation: true,
+        });
+        dispatch({ type: "emailImmediately", value: state.email.value });
+        dispatch({
+            type: "emailAfterDelay",
+            value: state.email.value,
+            noValidation: true,
+        });
+        dispatch({ type: "passwordImmediately", value: state.password.value });
+        dispatch({ type: "passwordAfterDelay", value: state.password.value });
+        dispatch({ type: "submitForm" });
     }
 
     return (
