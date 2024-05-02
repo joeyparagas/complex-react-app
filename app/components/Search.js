@@ -66,7 +66,7 @@ function Search() {
         }
     }, [state.searchTerm]);
 
-    // // Check when reqeustCount has been udpated
+    // Check when requestCount has been udpated
     useEffect(() => {
         // Make sure requestCount > 0, meaning its on the search page
         if (state.requestCount) {

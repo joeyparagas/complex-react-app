@@ -1,3 +1,5 @@
+// Chatbox located in bottom right corner of page
+
 import React, { useEffect, useContext, useRef } from "react";
 import StateContext from "../StateContext";
 import DispatchContext from "../DispatchContext";
@@ -18,11 +20,10 @@ function Chat() {
         chatMessages: [],
     });
 
-    // Autofocus on Chat input box when Chat is open
-    // Can't use autofocus due to it always being in DOM (unlike Search)
-    // Dependency is when the chat window is opened
+    // Check when chat window is opened
     useEffect(() => {
-        // If Chat is open:
+        // Autofocus on Chat input box when Chat is open
+        // Can't use autofocus due to it always being in DOM (unlike Search)
         if (appState.isChatOpen) {
             // focus on input element w/useRef
             chatField.current.focus();
@@ -32,9 +33,9 @@ function Chat() {
         }
     }, [appState.isChatOpen]);
 
-    // Auto scroll chat window down to latest chat message when overflow
-    // Dependency is when chatMessages is updated
+    // Check when chatMessages is updated
     useEffect(() => {
+        // Auto scroll chat window down to latest chat message when overflow
         // Get the current height of chatLog div and
         // set it equal to the amount of pixels to scroll down from the top
         chatLog.current.scrollTop = chatLog.current.scrollHeight;
