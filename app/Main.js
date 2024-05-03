@@ -95,6 +95,44 @@ function Main() {
         }
     }, [state.loggedIn]);
 
+    // Check userToken is still valid on initial load
+    useEffect(() => {
+        // Checks only when user is logged in
+        if (state.loggedIn) {
+            // Create variable to cancel Axios request
+            const ourRequest = Axios.CancelToken.source();
+            // Send Axios get request to server
+            async function fetchResults() {
+                try {
+                    const response = await Axios.post(
+                        "/checkToken",
+                        { token: state.user.token },
+                        { cancelToken: ourRequest.token }
+                    );
+                    // if response is false or token is invalid/expired then log user out
+                    if (!response.data) {
+                        // Note the use of dispatch not appDispatch since we are in main.js
+                        dispatch({ type: "logout" });
+                        // Create flash message to show logged out
+                        dispatch({
+                            type: "flashMessage",
+                            value: "Session has expired. Please log back in.",
+                        });
+                    }
+                } catch (e) {
+                    console.log(
+                        "There was a problem with the token or it's expired."
+                    );
+                }
+            }
+            fetchResults();
+            // Unmount Axios when complete
+            return () => {
+                ourRequest.cancel();
+            };
+        }
+    }, []);
+
     // Contains FlashMessages (alerts), Header, Routes, and  Footer
     return (
         // StateContext wraps around to use Global State (appState)
