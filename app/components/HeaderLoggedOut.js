@@ -17,6 +17,7 @@ function HeaderLoggedOut(props) {
                 password,
             });
             if (response.data) {
+                // Older Method setting data to localstorage vs in global state
                 // localStorage.setItem("SocietyCentralToken", response.data.token);
                 // localStorage.setItem(
                 //     "SocietyCentralUsername",
@@ -27,8 +28,19 @@ function HeaderLoggedOut(props) {
                 // Pushing the data (type:login and data:response.data [could be any name])
                 // back to main.js via dispatch
                 appDispatch({ type: "login", data: response.data });
+
+                // Create flash message to show logged in
+                appDispatch({
+                    type: "flashMessage",
+                    value: "You have successfully logged in.",
+                });
             } else {
                 console.log("Incorrect username / password");
+                // Create flash message to show something went wrong
+                appDispatch({
+                    type: "flashMessage",
+                    value: "Something went wrong with your login.",
+                });
             }
         } catch (e) {
             console.log("There was a problem.");
