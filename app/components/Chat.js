@@ -8,9 +8,10 @@ import { Link } from "react-router-dom";
 import io from "socket.io-client";
 
 // Establish Socket.io connection w/ browser and backend server
-const socket = io("http://localhost:8080");
+// const socket = io("http://localhost:8080");
 
 function Chat() {
+    const socket = useRef(null);
     const appDispatch = useContext(DispatchContext);
     const appState = useContext(StateContext);
     const chatField = useRef(null);
@@ -64,7 +65,7 @@ function Chat() {
 
         // Send message to chat server.
         // "chatFromBrowser" is a specific name programmed into backend
-        socket.emit("chatFromBrowser", {
+        socket.current.emit("chatFromBrowser", {
             message: state.fieldValue,
             token: appState.user.token,
         });
@@ -83,12 +84,18 @@ function Chat() {
 
     // Setup receiving state/data from chat server w/ socket.io
     useEffect(() => {
+        // Establish Socket.io connection w/ browser and backend server on load
+        socket.current = io("http://localhost:8080");
+
         // "chatFromServer" is a specific name programmed into backend
-        socket.on("chatFromServer", (message) => {
+        socket.current.on("chatFromServer", (message) => {
             setState((draft) => {
                 draft.chatMessages.push(message);
             });
         });
+
+        // Disconnect from socket when logged out
+        return () => socket.current.disconnect();
     }, []);
 
     return (

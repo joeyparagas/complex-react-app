@@ -19,17 +19,20 @@ import Home from "./components/Home";
 import Footer from "./components/Footer";
 import About from "./components/About";
 import Terms from "./components/Terms";
-// Implement lazy loading on CreatePost
-// import CreatePost from "./components/CreatePost";
-const CreatePost = React.lazy(() => import("./components/CreatePost"));
-// import ViewSinglePost from "./components/ViewSinglePost";
-const ViewSinglePost = React.lazy(() => import("./components/ViewSinglePost"));
 import FlashMessages from "./components/FlashMessages";
 import Profile from "./components/Profile";
 import EditPost from "./components/EditPost";
 import NotFound from "./components/NotFound";
-import Search from "./components/Search";
-import Chat from "./components/Chat";
+
+// Implement lazy loading on the following components
+// import CreatePost from "./components/CreatePost";
+const CreatePost = React.lazy(() => import("./components/CreatePost"));
+// import ViewSinglePost from "./components/ViewSinglePost";
+const ViewSinglePost = React.lazy(() => import("./components/ViewSinglePost"));
+// import Search from "./components/Search";
+const Search = React.lazy(() => import("./components/Search"));
+// import Chat from "./components/Chat";
+const Chat = React.lazy(() => import("./components/Chat"));
 
 function Main() {
     // Global initial State
@@ -185,13 +188,20 @@ function Main() {
                         classNames="search-overlay"
                         unmountOnExit // unmount entire component when closed
                     >
-                        <Search />
+                        <div className="search-overlay">
+                            <Suspense fallback="">
+                                <Search />
+                            </Suspense>
+                        </div>
                     </CSSTransition>
                     {
                         // This is an older method not using CSSTransition
                         // {state.isSearchOpen ? <Search /> : ""}
                     }
-                    <Chat />
+                    {/* Lazyload chat & show only when logged in*/}
+                    <Suspense fallback="">
+                        {state.loggedIn && <Chat />}
+                    </Suspense>
                     <Footer />
                 </BrowserRouter>
             </DispatchContext.Provider>

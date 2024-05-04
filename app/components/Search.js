@@ -119,7 +119,7 @@ function Search() {
     }
 
     return (
-        <div className="search-overlay">
+        <div className="">
             <div className="search-overlay-top shadow-sm">
                 <div className="container container--narrow">
                     <label
