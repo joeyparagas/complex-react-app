@@ -20,7 +20,7 @@ function Header(props) {
                 <h4 className="my-0 mr-md-auto font-weight-normal">
                     <Link to="/" className="text-white">
                         {" "}
-                        Society Central!{" "}
+                        Society Central{" "}
                     </Link>
                 </h4>
 

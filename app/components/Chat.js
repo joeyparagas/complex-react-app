@@ -85,7 +85,10 @@ function Chat() {
     // Setup receiving state/data from chat server w/ socket.io
     useEffect(() => {
         // Establish Socket.io connection w/ browser and backend server on load
-        socket.current = io("http://localhost:8080");
+        socket.current = io(
+            process.env.BACKENDURL ||
+                "https://complex-react-app-backend-mo6p.onrender.com"
+        );
 
         // "chatFromServer" is a specific name programmed into backend
         socket.current.on("chatFromServer", (message) => {

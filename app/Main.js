@@ -6,8 +6,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CSSTransition } from "react-transition-group";
 import Axios from "axios";
 // Axios.defaults.baseURL = "http://localhost:8080"; // used for developing locally only
-// Update so it can use local server or live url (Heroku)
-Axios.defaults.baseURL = process.env.BACKENDURL || "";
+// Update so it can use local server or live url (Heroku or Render)
+Axios.defaults.baseURL =
+    process.env.BACKENDURL ||
+    "https://complex-react-app-backend-mo6p.onrender.com";
 
 // Global State and Dispatch
 import StateContext from "./StateContext";
