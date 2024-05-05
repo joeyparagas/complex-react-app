@@ -43,3 +43,4 @@ Thumbs.db
 # My Files
 /assets
 /.old
+.env
